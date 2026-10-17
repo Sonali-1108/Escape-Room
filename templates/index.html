@@ -4,31 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room Analytics</title>
+    <title>Escape Room | Midnight Luxe</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    ```html
-<aside class="sidebar">
-    <h2>🔐 Escape Analytics</h2>
-    <p class="menu-label">MAIN MENU</p>
+    <aside class="sidebar">
+        <h2>🔐 ESCAPE ROOM</h2>
+        <p class="menu-label">YOUR SPACE</p>
 
-    <a class="active" href="/">Dashboard</a>
-    <a href="/book">Book a Room</a>
-    <a href="/payment">Demo Payment</a>
-    <a href="/feedback">Customer Feedback</a>
+        <a class="active" href="/">🏠 Dashboard</a>
+        <a href="/book">🎟️ Book a Room</a>
+        <a href="/payment">💳 Demo Payment</a>
+        <a href="/feedback">💜 Customer Feedback</a>
 
-    <p class="sidebar-note">Business Intelligence</p>
-    <p class="sidebar-note">SQLite Database</p>
-</aside>
-```
+        <div class="sidebar-note">
+            <p>✦ Midnight Luxe</p>
+            <p>Business Intelligence</p>
+            <p>SQLite Database</p>
+        </div>
+    </aside>
 
     <main class="main">
         <header>
             <div>
-                <p class="eyebrow">BUSINESS INTELLIGENCE</p>
-                <h1>Escape Room Dashboard</h1>
-                <p class="subtitle">Your business data, all in one place.</p>
+                <p class="eyebrow">✦ YOUR BUSINESS AT A GLANCE</p>
+                <h1>Welcome to your Dashboard ✨</h1>
+                <p class="subtitle">
+                    Every mystery has a story. Here's yours.
+                </p>
             </div>
             <span class="status">● Database overview</span>
         </header>
@@ -40,80 +43,116 @@
             </section>
         {% else %}
 
-            <section class="cards">
-                <article class="card">
-                    <p>Total Bookings</p>
-                    <h2>{{ data.analytics.total_bookings }}</h2>
-                    <span>All booking records</span>
-                </article>
+        <section class="cards">
+            <article class="card">
+                <p>🎟️ Total Bookings</p>
+                <h2>{{ data.analytics.total_bookings }}</h2>
+                <span>All booking records</span>
+            </article>
 
-                <article class="card">
-                    <p>Confirmed Bookings</p>
-                    <h2>{{ data.analytics.confirmed_bookings }}</h2>
-                    <span>Successfully confirmed</span>
-                </article>
+            <article class="card">
+                <p>✨ Confirmed Bookings</p>
+                <h2>{{ data.analytics.confirmed_bookings }}</h2>
+                <span>Successfully confirmed</span>
+            </article>
 
-                <article class="card">
-                    <p>Total Customers</p>
-                    <h2>{{ data.analytics.total_customers }}</h2>
-                    <span>Registered customers</span>
-                </article>
+            <article class="card">
+                <p>👑 Total Customers</p>
+                <h2>{{ data.analytics.total_customers }}</h2>
+                <span>Registered customers</span>
+            </article>
 
-                <article class="card">
-                    <p>Total Rooms</p>
-                    <h2>{{ data.analytics.total_rooms }}</h2>
-                    <span>Room records</span>
-                </article>
+            <article class="card">
+                <p>🔐 Total Rooms</p>
+                <h2>{{ data.analytics.total_rooms }}</h2>
+                <span>Available room records</span>
+            </article>
 
-                <article class="card">
-                    <p>Paid Revenue</p>
-                    <h2>₹{{ "%.2f"|format(data.analytics.paid_revenue) }}</h2>
-                    <span>Payments marked Paid</span>
-                </article>
-            </section>
+            <article class="card">
+                <p>💜 Paid Revenue</p>
+                <h2>₹{{ "%.2f"|format(data.analytics.paid_revenue) }}</h2>
+                <span>Payments marked Paid</span>
+            </article>
+        </section>
 
-            <section class="panel">
-                <div class="panel-heading">
-                    <div>
-                        <h2>Your database tables</h2>
-                        <p>Automatically discovered from your existing database</p>
-                    </div>
-                    <span class="count">{{ data.tables | length }} tables</span>
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">YOUR DATABASE</p>
+                    <h2>Database Explorer</h2>
+                    <p>Explore your existing tables and records.</p>
                 </div>
+                <span class="count">{{ data.tables | length }} tables</span>
+            </div>
 
-                {% if data.tables %}
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Table name</th>
-                                    <th>Records</th>
-                                    <th>Columns</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for table in data.tables %}
-                                <tr>
-                                    <td>
-                                        <a href="{{ url_for('view_table', table_name=table.name) }}">
-                                            {{ table.name }}
-                                        </a>
-                                    </td>
-                                    <td>{{ table.rows }}</td>
-                                    <td>{{ table.columns | length }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <p>No application tables were found in this database.</p>
-                {% endif %}
-            </section>
+            {% if data.tables %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Table name</th>
+                            <th>Records</th>
+                            <th>Columns</th>
+                            <th>Explore</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for table in data.tables %}
+                        <tr>
+                            <td>{{ table.name }}</td>
+                            <td>{{ table.rows }}</td>
+                            <td>{{ table.columns | length }}</td>
+                            <td>
+                                <a href="{{ url_for('view_table', table_name=table.name) }}">
+                                    View records →
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No application tables were found in this database.</p>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">QUICK ACCESS</p>
+                    <h2>Your Shortcuts</h2>
+                    <p>Jump straight to the features you need.</p>
+                </div>
+            </div>
+
+            <div class="cards">
+                <article class="card">
+                    <p>🎟️ Reservations</p>
+                    <h3>Book a Room</h3>
+                    <span>Create a new booking.</span>
+                    <p><a href="/book">Open bookings →</a></p>
+                </article>
+
+                <article class="card">
+                    <p>💳 Transactions</p>
+                    <h3>Demo Payment</h3>
+                    <span>Record a demo payment.</span>
+                    <p><a href="/payment">Open payments →</a></p>
+                </article>
+
+                <article class="card">
+                    <p>💜 Guest Experience</p>
+                    <h3>Customer Feedback</h3>
+                    <span>Collect ratings and comments.</span>
+                    <p><a href="/feedback">Open feedback →</a></p>
+                </article>
+            </div>
+        </section>
 
         {% endif %}
 
-        <footer>Escape Room Business Analytics · DBMS Project</footer>
+        <footer>✦ Escape Room Business Analytics · DBMS Project ✦</footer>
     </main>
 </body>
 </html>
