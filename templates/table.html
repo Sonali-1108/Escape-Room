@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ table_name }} | Escape Room Analytics</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <h2>🔐 ESCAPE ROOM</h2>
+
+        <p class="menu-label">YOUR SPACE</p>
+
+        <a href="/">🏠 Dashboard</a>
+        <a href="/book">🎟️ Book a Room</a>
+        <a href="/payment">💳 Demo Payment</a>
+        <a href="/feedback">💜 Customer Feedback</a>
+
+        <p class="sidebar-note">Midnight Luxe</p>
+        <p class="sidebar-note">SQLite Database</p>
+    </aside>
+
+    <main class="main">
+        <header>
+            <div>
+                <p class="eyebrow">DATABASE EXPLORER</p>
+
+                <h1>{{ table_name }} Table</h1>
+
+                <p class="subtitle">
+                    View the records stored in your database.
+                </p>
+            </div>
+
+            <a href="/">← Back to Dashboard</a>
+        </header>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>{{ table_name }} Records</h2>
+
+                    <p>{{ records | length }} records displayed</p>
+                </div>
+            </div>
+
+            {% if columns %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for column in columns %}
+                                    <th>{{ column }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% if records %}
+                                {% for row in records %}
+                                    <tr>
+                                        {% for column in columns %}
+                                            <td>
+                                                {{ row[column] if row[column] is not none else '—' }}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="{{ columns | length }}">
+                                        No records found in this table.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>
+                    No columns found. Check the database connected to the website.
+                </p>
+            {% endif %}
+        </section>
+
+        <footer>
+            Escape Room Business Analytics · DBMS Project
+        </footer>
+    </main>
+</body>
+</html>
