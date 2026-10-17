@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Escape Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Book Your Escape Room</h1>
+        <p>Fill in your details to make a booking.</p>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+        {% endif %}
+
+        <form action="{{ url_for('create_booking') }}" method="POST">
+
+            <label>First Name</label>
+            <input type="text" name="first_name" required>
+
+            <label>Last Name</label>
+            <input type="text" name="last_name" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Phone Number</label>
+            <input type="tel" name="phone_number" required>
+
+            <label>Choose Escape Room</label>
+            <select name="room_id" required>
+                <option value="">Select a room</option>
+                {% for room in rooms %}
+                    <option value="{{ room['room_id'] }}">
+                        {{ room['room_name'] }} -
+                        ₹{{ room['price_per_person'] }} per person
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Booking Date</label>
+            <input type="date" name="booking_date" required>
+
+            <label>Time Slot</label>
+            <select name="time_slot" required>
+                <option value="">Choose a time</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="04:00 PM">04:00 PM</option>
+                <option value="06:00 PM">06:00 PM</option>
+            </select>
+
+            <label>Number of People</label>
+            <input type="number" name="group_size" min="1" required>
+
+            <button type="submit">Confirm Booking</button>
+
+        </form>
+
+        <p><a href="/">Back to Dashboard</a></p>
+    </div>
+
+</body>
+</html>
