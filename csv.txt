@@ -1,0 +1,94 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+customer_id,first_name,last_name,email,phone_number
+1,Aarav,Sharma,aarav@gmail.com,9876543210
+2,Ananya,Reddy,ananya@gmail.com,9876543211
+3,Rohan,Patil,rohan@gmail.com,9876543212
+
+room_id,room_name,theme,capacity,price_per_person,difficulty_level
+101,Mystery Mansion,Horror,6,500.0,Hard
+102,Lost Temple,Adventure,8,400.0,Medium
+103,Space Escape,Science Fiction,5,600.0,Easy
+
+booking_id,customer_id,room_id,booking_date,time_slot,group_size,status
+1001,1,101,2026-10-20,10:00 AM,4,Confirmed
+1002,2,102,2026-10-21,02:00 PM,6,Pending
+1003,3,103,2026-10-22,04:00 PM,3,Confirmed
+
+staff_id,name,role,email,phone_number,assigned_room_id
+201,Priya Rao,Manager,priya@gmail.com,9876500001,101
+202,Karan Das,Game Master,karan@gmail.com,9876500002,102
+203,Meera Shah,Assistant,meera@gmail.com,9876500003,103
+
+payment_id,booking_id,amount,payment_date,payment_method,payment_status
+301,1001,2000.0,2026-10-20,UPI,Paid
+302,1002,2400.0,2026-10-21,Card,Pending
+303,1003,1800.0,2026-10-22,Cash,Paid
+
+room_name,price_per_person
+Mystery Mansion,500.0
+Lost Temple,400.0
+
+booking_id,first_name,last_name,booking_date,status
+1001,Aarav,Sharma,2026-10-20,Confirmed
+1002,Ananya,Reddy,2026-10-21,Pending
+1003,Rohan,Patil,2026-10-22,Confirmed
+
+room_name,booking_date,time_slot,group_size
+Mystery Mansion,2026-10-20,10:00 AM,4
+Lost Temple,2026-10-21,02:00 PM,6
+Space Escape,2026-10-22,04:00 PM,3
+
+total_payment_amount
+6200.0
+
+status,total_bookings
+Confirmed,2
+Pending,1
+
+payment_id,booking_id,amount,payment_method,payment_status
+301,1001,2000.0,UPI,Paid
+302,1002,2400.0,Card,Pending
+303,1003,1800.0,Cash,Paid
+
+customer_id,first_name,last_name
+1,Aarav,Sharma
+2,Ananya,Reddy
+3,Rohan,Patil
+
+table_name,total
+Customer,3
+Room,3
+Booking,3
+Staff,3
+Payment,3
