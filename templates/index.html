@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>🔐 Escape Analytics</h2>
+        <p class="menu-label">MAIN MENU</p>
+        <a class="active" href="/">Dashboard</a>
+        <p class="sidebar-note">Business Intelligence</p>
+        <p class="sidebar-note">SQLite Database</p>
+    </aside>
+
+    <main class="main">
+        <header>
+            <div>
+                <p class="eyebrow">BUSINESS INTELLIGENCE</p>
+                <h1>Escape Room Dashboard</h1>
+                <p class="subtitle">Your business data, all in one place.</p>
+            </div>
+            <span class="status">● Database overview</span>
+        </header>
+
+        {% if data.error %}
+            <section class="message">
+                <h2>Database not connected</h2>
+                <p>{{ data.error }}</p>
+            </section>
+        {% else %}
+
+            <section class="cards">
+                <article class="card">
+                    <p>Total Bookings</p>
+                    <h2>{{ data.analytics.total_bookings }}</h2>
+                    <span>All booking records</span>
+                </article>
+
+                <article class="card">
+                    <p>Confirmed Bookings</p>
+                    <h2>{{ data.analytics.confirmed_bookings }}</h2>
+                    <span>Successfully confirmed</span>
+                </article>
+
+                <article class="card">
+                    <p>Total Customers</p>
+                    <h2>{{ data.analytics.total_customers }}</h2>
+                    <span>Registered customers</span>
+                </article>
+
+                <article class="card">
+                    <p>Total Rooms</p>
+                    <h2>{{ data.analytics.total_rooms }}</h2>
+                    <span>Room records</span>
+                </article>
+
+                <article class="card">
+                    <p>Paid Revenue</p>
+                    <h2>₹{{ "%.2f"|format(data.analytics.paid_revenue) }}</h2>
+                    <span>Payments marked Paid</span>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Your database tables</h2>
+                        <p>Automatically discovered from your existing database</p>
+                    </div>
+                    <span class="count">{{ data.tables | length }} tables</span>
+                </div>
+
+                {% if data.tables %}
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Table name</th>
+                                    <th>Records</th>
+                                    <th>Columns</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for table in data.tables %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('view_table', table_name=table.name) }}">
+                                            {{ table.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ table.rows }}</td>
+                                    <td>{{ table.columns | length }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>No application tables were found in this database.</p>
+                {% endif %}
+            </section>
+
+        {% endif %}
+
+        <footer>Escape Room Business Analytics · DBMS Project</footer>
+    </main>
+</body>
+</html>
