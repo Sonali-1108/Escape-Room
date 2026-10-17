@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Payment | Escape Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Escape Room Demo Payment</h1>
+        <p>This is a demo only. No real money will be charged.</p>
+
+        <form method="POST">
+            <label for="booking_id">Booking ID</label>
+            <input type="number" id="booking_id" name="booking_id"
+                   min="1" required value="{{ booking_id or '' }}">
+
+            <label for="payment_method">Choose payment method</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="">Select a method</option>
+                <option value="UPI">UPI (Demo)</option>
+                <option value="Card">Credit/Debit Card (Demo)</option>
+                <option value="Cash">Cash (Demo)</option>
+            </select>
+
+            <button type="submit">Simulate Payment</button>
+        </form>
+
+        <p><a href="/">Back to Dashboard</a></p>
+        <p><a href="/feedback">Give Feedback</a></p>
+    </main>
+</body>
+</html>

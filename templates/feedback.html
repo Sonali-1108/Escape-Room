@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Feedback | Escape Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Customer Feedback</h1>
+        <p>Share your experience at our Escape Room!</p>
+
+        <form method="POST">
+            <label for="booking_id">Booking ID</label>
+            <input type="number" id="booking_id" name="booking_id"
+                   min="1" required>
+
+            <label for="rating">Rating</label>
+            <select id="rating" name="rating" required>
+                <option value="">Choose a rating</option>
+                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                <option value="4">⭐⭐⭐⭐ Good</option>
+                <option value="3">⭐⭐⭐ Average</option>
+                <option value="2">⭐⭐ Poor</option>
+                <option value="1">⭐ Very poor</option>
+            </select>
+
+            <label for="comments">Comments</label>
+            <textarea id="comments" name="comments"
+                      rows="5" maxlength="1000"
+                      placeholder="Tell us about your experience..."></textarea>
+
+            <button type="submit">Submit Feedback</button>
+        </form>
+
+        <p><a href="/">Back to Dashboard</a></p>
+        <p><a href="/payment">Make Demo Payment</a></p>
+    </main>
+</body>
+</html>
