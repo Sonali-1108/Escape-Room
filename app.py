@@ -9,19 +9,29 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "escape room.db")
 
 
-def get_dashboard_data():
-    if not os.path.exists(DB_PATH):
-        return {"error": "Database file not found. Place your existing escape room.db beside app.py.", "tables": []}
-
+def get_connection():
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
+    return connection
+
+
+def get_dashboard_data():
+    if not os.path.exists(DB_PATH):
+        return {
+            "error": "Database file not found. Place your existing escape room.db beside app.py.",
+            "tables": []
+        }
+
+    connection = get_connection()
 
     try:
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT name FROM sqlite_master
-            WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+            SELECT name
+            FROM sqlite_master
+            WHERE type = 'table'
+            AND name NOT LIKE 'sqlite_%'
             ORDER BY name
         """)
 
@@ -49,22 +59,24 @@ def get_dashboard_data():
         connection.close()
 
 
-
 @app.route("/")
 def home():
     data = get_dashboard_data()
 
     if not data["error"]:
-        connection = sqlite3.connect(DB_PATH)
+        connection = get_connection()
+
         try:
             cursor = connection.cursor()
 
             cursor.execute("SELECT COUNT(*) FROM Booking")
             total_bookings = cursor.fetchone()[0]
 
-            cursor.execute(
-                "SELECT COUNT(*) FROM Booking WHERE status = 'Confirmed'"
-            )
+            cursor.execute("""
+                SELECT COUNT(*)
+                FROM Booking
+                WHERE status = 'Confirmed'
+            """)
             confirmed_bookings = cursor.fetchone()[0]
 
             cursor.execute("SELECT COUNT(*) FROM Customer")
@@ -73,10 +85,11 @@ def home():
             cursor.execute("SELECT COUNT(*) FROM Room")
             total_rooms = cursor.fetchone()[0]
 
-            cursor.execute(
-                "SELECT COALESCE(SUM(amount), 0) FROM Payment "
-                "WHERE payment_status = 'Paid'"
-            )
+            cursor.execute("""
+                SELECT COALESCE(SUM(amount), 0)
+                FROM Payment
+                WHERE payment_status = 'Paid'
+            """)
             paid_revenue = cursor.fetchone()[0]
 
             data["analytics"] = {
@@ -86,6 +99,7 @@ def home():
                 "total_rooms": total_rooms,
                 "paid_revenue": paid_revenue
             }
+
         finally:
             connection.close()
 
@@ -94,8 +108,7 @@ def home():
 
 @app.route("/book", methods=["GET", "POST"])
 def create_booking():
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row
+    connection = get_connection()
 
     try:
         cursor = connection.cursor()
@@ -115,8 +128,10 @@ def create_booking():
             except ValueError:
                 return "Please enter a valid room and group size.", 400
 
-            if not all([first_name, last_name, email, phone,
-                        booking_date, time_slot]):
+            if not all([
+                first_name, last_name, email, phone,
+                booking_date, time_slot
+            ]):
                 return "Please fill in every field.", 400
 
             if group_size < 1:
@@ -134,10 +149,12 @@ def create_booking():
             if group_size > room["capacity"]:
                 return "Group size exceeds this room's capacity.", 400
 
-            cursor.execute(
-                "SELECT customer_id FROM Customer WHERE email = ? LIMIT 1",
-                (email,)
-            )
+            cursor.execute("""
+                SELECT customer_id
+                FROM Customer
+                WHERE email = ?
+                LIMIT 1
+            """, (email,))
             customer = cursor.fetchone()
 
             if customer:
@@ -148,6 +165,7 @@ def create_booking():
                     (first_name, last_name, email, phone_number)
                     VALUES (?, ?, ?, ?)
                 """, (first_name, last_name, email, phone))
+
                 customer_id = cursor.lastrowid
 
             cursor.execute("""
@@ -179,10 +197,10 @@ def create_booking():
     finally:
         connection.close()
 
+
 @app.route("/payment", methods=["GET", "POST"])
 def payment_page():
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row
+    connection = get_connection()
 
     try:
         cursor = connection.cursor()
@@ -199,19 +217,21 @@ def payment_page():
             except ValueError:
                 return "Invalid booking ID.", 400
 
-            cursor.execute(
-                "SELECT booking_id, group_size, room_id FROM Booking WHERE booking_id = ?",
-                (booking_id,)
-            )
+            cursor.execute("""
+                SELECT booking_id, group_size, room_id
+                FROM Booking
+                WHERE booking_id = ?
+            """, (booking_id,))
             booking = cursor.fetchone()
 
             if booking is None:
                 return "Booking not found.", 404
 
-            cursor.execute(
-                "SELECT price_per_person FROM Room WHERE room_id = ?",
-                (booking["room_id"],)
-            )
+            cursor.execute("""
+                SELECT price_per_person
+                FROM Room
+                WHERE room_id = ?
+            """, (booking["room_id"],))
             room = cursor.fetchone()
 
             if room is None:
@@ -221,17 +241,20 @@ def payment_page():
 
             cursor.execute("""
                 INSERT INTO Payment
-                (booking_id, amount, payment_date, payment_method, payment_status)
+                (booking_id, amount, payment_date,
+                 payment_method, payment_status)
                 VALUES (?, ?, DATE('now'), ?, 'Paid')
             """, (booking_id, amount, payment_method))
 
             connection.commit()
 
-            return (
-                f"Demo payment recorded! Booking ID: {booking_id}. "
-                f"Amount: ₹{amount:.2f}. No real money was charged. "
-                '<a href="/">Back to Dashboard</a>'
-            )
+            return f"""
+                <h2>Demo Payment Recorded!</h2>
+                <p>Booking ID: {booking_id}</p>
+                <p>Amount: ₹{amount:.2f}</p>
+                <p>No real money was charged.</p>
+                <a href="/">Back to Dashboard</a>
+            """
 
         return render_template("payment.html")
 
@@ -245,38 +268,25 @@ def payment_page():
 
 @app.route("/feedback", methods=["GET", "POST"])
 def feedback_page():
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row
+    if request.method == "POST":
+        booking_id = request.form.get("booking_id", "").strip()
+        rating = request.form.get("rating", "").strip()
+        comments = request.form.get("comments", "").strip()
 
-    try:
-        cursor = connection.cursor()
+        try:
+            booking_id = int(booking_id)
+            rating = int(rating)
+        except ValueError:
+            return "Enter a valid booking ID and rating.", 400
 
-        # Create a separate Feedback table if it doesn't exist
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS Feedback (
-                feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                booking_id INTEGER NOT NULL,
-                rating INTEGER NOT NULL,
-                comments TEXT,
-                feedback_date DATE DEFAULT (DATE('now')),
-                FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
-            )
-        """)
+        if not 1 <= rating <= 5:
+            return "Rating must be between 1 and 5.", 400
 
-        if request.method == "POST":
-            booking_id = request.form.get("booking_id", "").strip()
-            rating = request.form.get("rating", "").strip()
-            comments = request.form.get("comments", "").strip()
+        # Validate the booking without creating a Feedback table.
+        connection = get_connection()
 
-            try:
-                booking_id = int(booking_id)
-                rating = int(rating)
-            except ValueError:
-                return "Enter a valid booking ID and rating.", 400
-
-            if rating < 1 or rating > 5:
-                return "Rating must be between 1 and 5.", 400
-
+        try:
+            cursor = connection.cursor()
             cursor.execute(
                 "SELECT booking_id FROM Booking WHERE booking_id = ?",
                 (booking_id,)
@@ -285,39 +295,85 @@ def feedback_page():
             if cursor.fetchone() is None:
                 return "Booking not found. Please check your booking ID.", 404
 
-            cursor.execute("""
-                INSERT INTO Feedback (booking_id, rating, comments)
-                VALUES (?, ?, ?)
-            """, (booking_id, rating, comments))
+        except sqlite3.Error:
+            return "Could not verify the booking.", 500
 
-            connection.commit()
-            return "<h2>Thank you for your feedback!</h2><a href='/'>Back to Dashboard</a>"
+        finally:
+            connection.close()
 
-        return render_template("feedback.html")
+        # Demo only: feedback is not stored permanently.
+        return f"""
+            <h2>Thank You for Your Feedback! 💜</h2>
+            <p>Your rating: {rating}/5</p>
+            <p>Your feedback was received for this demonstration.</p>
+            <p>Your comments have not been permanently saved.</p>
+            <a href="/">Back to Dashboard</a>
+        """
 
-    except sqlite3.Error:
-        connection.rollback()
-        return "A database error occurred.", 500
-
-    finally:
-        connection.close()
+    return render_template("feedback.html")
 
 
+@app.route("/application", methods=["GET", "POST"])
+def application_page():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        position = request.form.get("position", "").strip()
+        experience = request.form.get("experience", "").strip()
+        availability = request.form.get("availability", "").strip()
+
+        if not all([name, email, phone, position, availability]):
+            return "Please fill in all required fields.", 400
+
+        allowed_positions = [
+            "Game Master",
+            "Receptionist",
+            "Operations Staff"
+        ]
+
+        allowed_availability = [
+            "Weekdays",
+            "Weekends",
+            "Flexible"
+        ]
+
+        if position not in allowed_positions:
+            return "Please select a valid position.", 400
+
+        if availability not in allowed_availability:
+            return "Please select a valid availability option.", 400
+
+        # Demo only: no Job Application table is created.
+        return """
+            <h2>Application Submitted! 💜</h2>
+            <p>Thank you for your interest in joining our team.</p>
+            <p>This is a demonstration. Your application has not been saved.</p>
+            <a href="/">Back to Dashboard</a>
+        """
+
+    return render_template("application.html")
 
 
 @app.route("/table/<table_name>")
 def view_table(table_name):
-    allowed_tables = ["Booking", "Customer", "Payment", "Room", "Staff"]
+    allowed_tables = [
+        "Booking",
+        "Customer",
+        "Payment",
+        "Room",
+        "Staff"
+    ]
 
     if table_name not in allowed_tables:
         return "Table not found", 404
 
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row
+    connection = get_connection()
 
     try:
         cursor = connection.cursor()
         safe_name = '"' + table_name.replace('"', '""') + '"'
+
         cursor.execute(f"SELECT * FROM {safe_name} LIMIT 100")
 
         columns = [item[0] for item in cursor.description]
@@ -329,11 +385,17 @@ def view_table(table_name):
             columns=columns,
             records=records
         )
+
+    except sqlite3.Error:
+        return "Could not read this database table.", 500
+
     finally:
         connection.close()
 
 
 if __name__ == "__main__":
-   import os
-
-app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )

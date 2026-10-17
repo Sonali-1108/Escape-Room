@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application | Midnight Luxe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>🔐 ESCAPE ROOM</h2>
+        <p class="menu-label">YOUR SPACE</p>
+
+        <a href="/">🏠 Dashboard</a>
+        <a href="/book">🎟️ Book a Room</a>
+        <a href="/payment">💳 Demo Payment</a>
+        <a href="/feedback">💜 Customer Feedback</a>
+        <a class="active" href="/application">💼 Job Application</a>
+
+        <div class="sidebar-note">
+            <p>✦ Midnight Luxe</p>
+            <p>Careers at Escape Room</p>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header>
+            <div>
+                <p class="eyebrow">✦ CAREERS</p>
+                <h1>Join Our Team 💼</h1>
+                <p class="subtitle">
+                    Love solving mysteries? Build unforgettable experiences with us.
+                </p>
+            </div>
+        </header>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">YOUR NEXT ADVENTURE</p>
+                    <h2>Job Application Form</h2>
+                    <p>Fill in your details to apply.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="/application">
+                <label for="name">Full Name *</label>
+                <input id="name" type="text" name="name"
+                       placeholder="Enter your full name" required>
+
+                <label for="email">Email Address *</label>
+                <input id="email" type="email" name="email"
+                       placeholder="you@example.com" required>
+
+                <label for="phone">Phone Number *</label>
+                <input id="phone" type="tel" name="phone"
+                       placeholder="Enter your phone number" required>
+
+                <label for="position">Position Applying For *</label>
+                <select id="position" name="position" required>
+                    <option value="">Choose a position</option>
+                    <option value="Game Master">Game Master</option>
+                    <option value="Receptionist">Receptionist</option>
+                    <option value="Operations Staff">Operations Staff</option>
+                </select>
+
+                <label for="experience">Previous Experience</label>
+                <textarea id="experience" name="experience"
+                          rows="4"
+                          placeholder="Tell us about your experience (optional)"></textarea>
+
+                <label for="availability">Availability *</label>
+                <select id="availability" name="availability" required>
+                    <option value="">Choose your availability</option>
+                    <option value="Weekdays">Weekdays</option>
+                    <option value="Weekends">Weekends</option>
+                    <option value="Flexible">Flexible</option>
+                </select>
+
+                <button type="submit">Submit Application ✨</button>
+            </form>
+
+            <p><a href="/">← Back to Dashboard</a></p>
+            <p class="subtitle">
+                Demo form: application details are not permanently stored.
+            </p>
+        </section>
+
+        <footer>✦ Escape Room Careers · Midnight Luxe ✦</footer>
+    </main>
+</body>
+</html>
