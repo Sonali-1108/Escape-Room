@@ -115,7 +115,4 @@ The database design and its entities, attributes, primary keys, foreign keys, an
 
 Developed as a college Problem-Based Learning (PBL) project for the DBMS subject.
 
-## 📄 License
-
-This project is intended for academic and educational purposes.
 
