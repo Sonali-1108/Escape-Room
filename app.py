@@ -444,7 +444,7 @@ def view_table(table_name):
         safe_name = '"' + table_name.replace('"', '""') + '"'
         cursor.execute(f"SELECT * FROM {safe_name} LIMIT 100")
 
-        columns = [item["name"] for item in cursor.description]
+        columns = [item[0] for item in cursor.description]
         records = [dict(row) for row in cursor.fetchall()]
 
         return render_template(
