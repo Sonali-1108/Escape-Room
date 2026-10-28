@@ -111,3 +111,29 @@ SELECT * FROM Room;
 SELECT * FROM Booking;
 SELECT * FROM Staff;
 SELECT * FROM Payment;
+CREATE VIEW BookingDetails AS
+SELECT
+    B.booking_id,
+    C.first_name,
+    C.last_name,
+    R.room_name,
+    B.booking_date,
+    B.time_slot,
+    B.status
+FROM Booking B
+JOIN Customer C
+    ON B.customer_id = C.customer_id
+JOIN Room R
+    ON B.room_id = R.room_id;
+CREATE TABLE BookingAudit (
+    audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    booking_id INTEGER,
+    action TEXT,
+    action_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TRIGGER AfterBookingInsert
+AFTER INSERT ON Booking
+BEGIN
+    INSERT INTO BookingAudit (booking_id, action)
+    VALUES (NEW.booking_id, 'New booking created');
+END;
