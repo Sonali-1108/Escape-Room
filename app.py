@@ -94,3 +94,4 @@ def get_dashboard_data():
             WHERE type IN ('table', 'view')
               AND name NOT LIKE 'sqlite_%'
             ORDER BY CASE type WHEN 'view' THEN 1 ELSE 0 END, name
+            """)
