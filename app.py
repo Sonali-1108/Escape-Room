@@ -144,15 +144,12 @@ def get_dashboard_data():
         connection.close()
 
 
+
 @app.route("/")
 def dashboard():
     data = get_dashboard_data()
-    return render_template(
-        "index.html",
-        tables=data["tables"],
-        stats=data["stats"],
-        error=data["error"]
-    )
+    return render_template("index.html", data=data)
+
 
 
 @app.route("/table/<table_name>")
